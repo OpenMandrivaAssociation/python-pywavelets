@@ -12,6 +12,7 @@ Source0: 	%{pkgname}-%{version}.tar.bz2
 License: 	MIT
 Group:		Development/Python
 Url: 		http://www.pybytes.com/pywavelets/
+BuildRoot: 	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Obsoletes:	pywavelets
 Requires:	python-numpy
 Requires:	python >= 2.4
