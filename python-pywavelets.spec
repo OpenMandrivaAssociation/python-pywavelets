@@ -1,8 +1,8 @@
 %define pkgname PyWavelets
 %define module	pywavelets
 %define name 	python-%{module}
-%define version 0.1.6
-%define release 2
+%define version 0.2.0
+%define release 1
 
 Summary: 	Python module for wavelet transforms
 Name: 		%{name}
@@ -15,30 +15,37 @@ Url: 		http://www.pybytes.com/pywavelets/
 BuildRoot: 	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Obsoletes:	pywavelets
 Requires:	python-numpy
-Requires:	python >= 2.4
-BuildRequires:	python-devel >= 2.4
+BuildRequires:	python-cython
+BuildRequires:	python-sphinx
+%py_requires -d
 
 %description
-PyWavelets is a Python module for calculating the Simple and Inverse
-Discrete Wavelet Transform, as well as Wavelet Packets and the Stationary
-Wavelet Transform.
+PyWavelets is a Python wavelet transform module that includes:
+
+* 1D and 2D Forward and Inverse Discrete Wavelet Transform (DWT and IDWT)
+* 1D and 2D Stationary Wavelet Transform (Undecimated Wavelet Transform)
+* 1D and 2D Wavelet Packet decomposition and reconstruction
+* Computing Approximations of wavelet and scaling functions
+* Over seventy built-in wavelet filters and support for custom wavelets
+* Single and double precision calculations
+* Results compatibility with Matlab Wavelet Toolbox (tm)
 
 %prep
 %setup -q -n %{pkgname}-%{version}
 
 %build
-%__python setup.py build
+PYTHONDONTWRITEBYTECODE= %__python setup.py build
+%make -C doc html
 
 %install
-rm -rf %{buildroot}
-%__python setup.py install --root=%{buildroot} --record=INSTALLED_FILES
-%__chmod -R a+rx *.txt doc/ demo/
+%__rm -rf %{buildroot}
+PYTHONDONTWRITEBYTECODE= %__python setup.py install --root=%{buildroot} --record=FILE_LIST
 
 %clean
-rm -rf %{buildroot}
+%__rm -rf %{buildroot}
 
-%files -f INSTALLED_FILES
+%files -f FILE_LIST
 %defattr(-,root,root)
-%doc CHANGES.txt README.txt demo/ doc/
+%doc *.txt demo/ doc/build/html
 
 
