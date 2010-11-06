@@ -2,7 +2,7 @@
 %define module	pywavelets
 %define name 	python-%{module}
 %define version 0.2.0
-%define release 1
+%define release 2
 
 Summary: 	Python module for wavelet transforms
 Name: 		%{name}
