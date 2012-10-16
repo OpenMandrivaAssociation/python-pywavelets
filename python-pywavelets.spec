@@ -1,23 +1,29 @@
 %define pkgname PyWavelets
 %define module	pywavelets
 %define name 	python-%{module}
-%define version 0.2.0
-%define release 2
+%define version 0.2.2
+%define	rel		1
+%if %mdkversion < 201100
+%define release %mkrel %{rel}
+%else
+%define	release	%{rel}
+%endif 
 
 Summary: 	Python module for wavelet transforms
 Name: 		%{name}
 Version: 	%{version}
 Release: 	%mkrel %{release}
-Source0: 	%{pkgname}-%{version}.tar.bz2
+Source0:	http://pypi.python.org/packages/source/P/%{pkgname}/%{pkgname}-%{version}.zip
+Patch0:		setup-lm-0.2.2.patch
 License: 	MIT
 Group:		Development/Python
 Url: 		http://www.pybytes.com/pywavelets/
 BuildRoot: 	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Obsoletes:	pywavelets
 Requires:	python-numpy
+BuildRequires:	python-setuptools
 BuildRequires:	python-cython
 BuildRequires:	python-sphinx
-%py_requires -d
 
 %description
 PyWavelets is a Python wavelet transform module that includes:
@@ -32,6 +38,7 @@ PyWavelets is a Python wavelet transform module that includes:
 
 %prep
 %setup -q -n %{pkgname}-%{version}
+%patch0 -p0
 
 %build
 PYTHONDONTWRITEBYTECODE= %__python setup.py build
@@ -39,13 +46,14 @@ PYTHONDONTWRITEBYTECODE= %__python setup.py build
 
 %install
 %__rm -rf %{buildroot}
-PYTHONDONTWRITEBYTECODE= %__python setup.py install --root=%{buildroot} --record=FILE_LIST
+PYTHONDONTWRITEBYTECODE= %__python setup.py install --root=%{buildroot}
 
 %clean
 %__rm -rf %{buildroot}
 
-%files -f FILE_LIST
+%files
 %defattr(-,root,root)
 %doc *.txt demo/ doc/build/html
-
+%py_platsitedir/PyWavelets*
+%py_platsitedir/pywt*
 
