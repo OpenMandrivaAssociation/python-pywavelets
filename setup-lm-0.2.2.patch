@@ -1,0 +1,10 @@
+--- setup.py.bak	2012-10-15 22:53:15.483841449 -0400
++++ setup.py	2012-10-15 22:53:45.637633580 -0400
+@@ -22,6 +22,7 @@
+     sources=["src/_pywt.pyx", "src/common.c", "src/convolution.c",
+              "src/wavelets.c", "src/wt.c"],
+     include_dirs=["src"],
++    libraries=["m"],
+     define_macros=[("PY_EXTENSION", None)],
+ )
+ 
