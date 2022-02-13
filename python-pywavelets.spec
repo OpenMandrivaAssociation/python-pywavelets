@@ -14,6 +14,7 @@ License: 	MIT
 Group:		Development/Python
 Url: 		https://pywavelets.readthedocs.io/
 BuildRequires:	pkgconfig(python3)
+BuildRequires:	python3dist(cython)
 BuildRequires:	python3dist(numpy)
 BuildRequires:	python3dist(setuptools)
 # for docs
