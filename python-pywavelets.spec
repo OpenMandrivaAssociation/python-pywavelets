@@ -6,13 +6,14 @@
 
 Summary: 	Python module for wavelet transforms
 Name: 		python-%{module}
-Version: 	1.1.1
+Version: 	1.4.1
 Release: 	1
 Source0:	https://github.com/PyWavelets/pywt/archive/refs/tags/v%{version}/%{smodule}-%{version}.tar.gz
 #Patch0:		setup-lm-0.2.2.patch
 License: 	MIT
 Group:		Development/Python
 Url: 		https://pywavelets.readthedocs.io/
+BuildRequires:	python-pip
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	python3dist(cython)
 BuildRequires:	python3dist(numpy)
@@ -44,7 +45,7 @@ PyWavelets is a Python wavelet transform module that includes:
 %doc doc/build/html
 %doc demo/
 %{python3_sitearch}/%{smodule}/
-%{python3_sitearch}/%{pkgname}-*.egg-info
+%{python3_sitearch}/%{pkgname}*.dist-info
 
 #---------------------------------------------------------------------------
 
