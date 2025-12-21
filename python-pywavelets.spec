@@ -13,6 +13,7 @@ Source0:	https://github.com/PyWavelets/pywt/archive/refs/tags/v%{version}/%{smod
 License: 	MIT
 Group:		Development/Python
 Url: 		https://pywavelets.readthedocs.io/
+BuildRequires:	make
 BuildRequires:	python-pip
 BuildRequires:	pkgconfig(python3)
 BuildRequires:	python3dist(cython)
