@@ -7,7 +7,7 @@
 Summary: 	Python module for wavelet transforms
 Name: 		python-%{module}
 Version: 	1.4.1
-Release: 	2
+Release: 	3
 Source0:	https://github.com/PyWavelets/pywt/archive/refs/tags/v%{version}/%{smodule}-%{version}.tar.gz
 #Patch0:		setup-lm-0.2.2.patch
 License: 	MIT
