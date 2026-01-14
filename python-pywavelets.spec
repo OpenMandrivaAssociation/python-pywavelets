@@ -1,32 +1,41 @@
-%define pkgname PyWavelets
-%define module	pywavelets
-%define smodule pywt
+%define module pywt
+%define oname pywavelets
 
-%bcond_with tests
+%bcond tests 0
+# doc html build requires myst-nb which is unpackaged
+%bcond docs 0
 
 Summary: 	Python module for wavelet transforms
-Name: 		python-%{module}
-Version: 	1.4.1
-Release: 	3
-Source0:	https://github.com/PyWavelets/pywt/archive/refs/tags/v%{version}/%{smodule}-%{version}.tar.gz
+Name: 		python-pywavelets
+Version: 	1.9.0
+Release: 	1
+Source0:	https://github.com/PyWavelets/pywt/archive/refs/tags/v%{version}/%{module}-%{version}.tar.gz#/%{name}-%{version}.tar.gz
 #Patch0:		setup-lm-0.2.2.patch
 License: 	MIT
 Group:		Development/Python
-Url: 		https://pywavelets.readthedocs.io/
+URL: 		https://pywavelets.readthedocs.io/
+BuildSystem:	python
+BuildRequires:	meson
+BuildRequires:	ninja
 BuildRequires:	make
-BuildRequires:	python-pip
-BuildRequires:	pkgconfig(python3)
-BuildRequires:	python3dist(cython)
-BuildRequires:	python3dist(numpy)
-BuildRequires:	python3dist(setuptools)
+BuildRequires:	pkgconfig(python)
+BuildRequires:	python%{pyver}dist(cython)
+BuildRequires:	python%{pyver}dist(meson-python)
+BuildRequires:	python%{pyver}dist(numpy)
+BuildRequires:	python%{pyver}dist(pip)
+BuildRequires:	python%{pyver}dist(setuptools)
+BuildRequires:	python%{pyver}dist(wheel)
 # for docs
-BuildRequires:	python3dist(pygments)
-BuildRequires:	python3dist(sphinx)
-BuildRequires:	python3dist(numpydoc)
-BuildRequires:	python3dist(matplotlib)
-
+%if %{with docs}
+BuildRequires:	python%{pyver}dist(pygments)
+BuildRequires:	python%{pyver}dist(sphinx)
+BuildRequires:	python%{pyver}dist(numpydoc)
+BuildRequires:	python%{pyver}dist(matplotlib)
+# Currenty unpackaged, doc build requires myst-nb
+#BuildRequires:	python%%{pyver}dist(myst_nb)
+%endif
 %if %{with tests}
-BuildRequires:	python3-nose
+BuildRequires:	python%{pyver}dist(pytest)
 %endif
 
 %description
@@ -40,31 +49,41 @@ PyWavelets is a Python wavelet transform module that includes:
 * Single and double precision calculations
 * Results compatibility with Matlab Wavelet Toolbox (tm)
 
-%files
-%license LICENSE
-%doc README.rst
-%doc doc/build/html
-%doc demo/
-%{python3_sitearch}/%{smodule}/
-%{python3_sitearch}/%{pkgname}*.dist-info
-
-#---------------------------------------------------------------------------
 
 %prep
-%autosetup -n %{smodule}-%{version}
+%autosetup -n %{module}-%{version}
 # Remove bundled egg-info
 rm -rf %{pypi_name}.egg-info
 
 # Fix wrong-script-interpreter
-find demo -name '*.py' -exec sed -i "s|#!/usr/bin/env python|#!%__python3|" {} \;
+find demo -name '*.py' -exec sed -i "s|#!/usr/bin/env python|#!%{__python}|" {} \;
+sed -i '1{/env python/d}' pywt/tests/*.py util/create_dat.py
+chmod -x util/create_dat.py
+
+# These are unpackaged deps and apparently not needed
+sed -i -e '/jupyterlite_sphinx/d' -e '/sphinx_togglebutton/d' doc/source/conf.py
+sed -i -e '/jupyterlite-pyodide-kernel/d' -e '/jupyterlite-sphinx/d' -e '/sphinx-togglebutton/d' -e '/docutils/s/<.*//' util/readthedocs/requirements.txt
 
 %build
-%py3_build
+export CFLAGS="%{optflags} -fno-strict-aliasing"
+export LDFLAGS="%{ldflags} -lpython%{pyver}"
+%py_build
 
 %install
-%py3_install
+%py_install
+# doc build requires the package to be installed in the buildroot
+%if %{with docs}
+# make html docs
+PYTHONPATH="%{buildroot}%{python_sitearch}" make -C doc html
+find -name '.buildinfo' -delete
+%endif
 
-# docs
-PYTHONPATH="$PYTHONPATH:%{buildroot}%{python3_sitearch}" \
-make -C doc PAPER=letter html
-find doc/build/html -name '.*' -delete
+%files
+%license LICENSE
+%doc README.rst
+%doc demo/
+%{python_sitearch}/%{module}/
+%{python_sitearch}/%{oname}-%{version}.dist-info
+%if %{with docs}
+%doc doc/build/html
+%endif
